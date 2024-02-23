@@ -1,2 +1,3 @@
 {{ getenv('TEST_SHOW') }}<br>
-{{ config('broadcasting.default') }}
+{{ config('broadcasting.default') }}<br>
+{{ config('app.env') }}
