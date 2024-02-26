@@ -11,6 +11,8 @@ ENV PUSHER_APP_CLUSTER=${_PUSHER_APP_CLUSTER}
 
 RUN apk add --no-cache nginx wget
 
+RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+
 RUN mkdir -p /run/nginx
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
@@ -21,11 +23,19 @@ COPY . /app
 # 设置环境变量
 ENV BROADCAST_DRIVER=pusher
 
-RUN sh -c "wget http://getcomposer.org/composer.phar && chmod a+x composer.phar && mv composer.phar /usr/local/bin/composer"
+# RUN sh -c "wget http://getcomposer.org/composer.phar && chmod a+x composer.phar && mv composer.phar /usr/local/bin/composer"
+# 這一行為下面兩行
+
+# 複製 Composer 到映像中
+COPY ./docker/composer.phar /usr/local/bin/composer
+# 設置 Composer 為可執行
+RUN chmod a+x /usr/local/bin/composer
+
 RUN cd /app && \
     /usr/local/bin/composer install --no-dev
 
 RUN chown -R www-data: /app
+RUN chmod +x /app/docker/startup.sh
 
 
 CMD sh /app/docker/startup.sh
