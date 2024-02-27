@@ -1,8 +1,5 @@
 FROM php:7.4-fpm-alpine
 
-ENV APP_ENV=${_APP_ENV}
-ENV APP_KEY=${_APP_KEY}
-ENV APP_DEBUG=${_APP_DEBUG}
 ENV BROADCAST_DRIVER=${_BROADCAST_DRIVER}
 ENV PUSHER_APP_ID=${_PUSHER_APP_ID}
 ENV PUSHER_APP_KEY=${_PUSHER_APP_KEY}
@@ -31,11 +28,13 @@ COPY ./docker/composer.phar /usr/local/bin/composer
 # 設置 Composer 為可執行
 RUN chmod a+x /usr/local/bin/composer
 
+RUN chown -R www-data: /app
+# RUN chmod -R 777 www-data: /app
+RUN chmod +x /app/docker/startup.sh
+
 RUN cd /app && \
     /usr/local/bin/composer install --no-dev
 
-RUN chown -R www-data: /app
-RUN chmod +x /app/docker/startup.sh
-
 
 CMD sh /app/docker/startup.sh
+# CMD php artisan serve --host=0.0.0.0 --port 8080
