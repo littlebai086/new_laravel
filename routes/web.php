@@ -20,3 +20,5 @@ Route::get('/', function () {
 Route::get('/test_env', function () {
     return view('test_env');
 });
+
+Route::get('/test_sql','TestController@testsql');
